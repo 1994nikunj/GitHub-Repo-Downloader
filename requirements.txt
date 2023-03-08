@@ -1,0 +1,6 @@
+requests
+zipfile
+io
+tkinter
+
+# pip install -r requirements.txt
