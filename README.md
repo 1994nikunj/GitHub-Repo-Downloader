@@ -1,8 +1,22 @@
 # GitHub Repo Downloader
-> This is a simple `Python` script that allows you to download the contents of any public GitHub repository in the form 
-of a ZIP archive. You can either run the script from the command line or use the included `tkinter` GUI to enter the 
-repository URL and choose a save location for the ZIP archive.
+> The GitHub Repo Downloader is a `Python` GUI application designed to make it easy to download entire GitHub repositories
+> as ZIP archives. The application utilizes the `GitHub API` to fetch the contents of the repository and download them to
+> a specified location on the user's computer. The application is built using the Python standard library, as well as
+> the `tkinter` library for the GUI and the `requests` library for handling HTTP requests.
 - - - -
+## Feature List:
+- Simple and intuitive GUI for entering the URL of the GitHub repository and selecting the download location.
+- Option to browse for and select the download location using a file dialog.
+- Option to set the download location to the current working directory with a single click.
+- Progress bar that shows the download progress and estimated time remaining.
+- Ability to download entire repositories, including all files and directories, in a single ZIP archive.
+- Option to cancel the download at any time.
+- Error handling for invalid URLs, network errors, and other exceptions that may occur during the download process.
+- Success message upon completion of the download process.
+
+## Sample Screenshots
+![screenshot_1.png](Assets%2Fscreenshot_1.png)
+![screenshot_2.png](Assets%2Fscreenshot_2.png)
 ## Usage
 
 ### Clone Repo:

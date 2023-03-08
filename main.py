@@ -1,6 +1,8 @@
 import io
+import os
+import time
 import tkinter as tk
-import tkinter.filedialog
+from tkinter import messagebox, filedialog, ttk
 import zipfile
 
 import requests
@@ -11,21 +13,40 @@ class GitHubRepoDownloader(tk.Frame):
     def __init__(self, master=None):
         super().__init__(master)
         self.master = master
-        self.pack()
+        self.master.geometry("400x355")  # set the size of the window
+        self.master.resizable(False, False)  # prevent the window from being resized
+        self.master.title("GitHub Repo Downloader")  # set the title of the window
+        self.pack(fill="both", expand=True)  # fill the entire window
         self.create_widgets()
 
     def create_widgets(self):
         self.url_label = tk.Label(self, text="Enter the URL of a GitHub repository:")
-        self.url_label.pack()
+        self.url_label.pack(pady=(20, 0))
 
-        self.url_entry = tk.Entry(self, width=50)
-        self.url_entry.pack()
+        self.url_entry = tk.Entry(self, width=60)
+        self.url_entry.pack(ipady=10, pady=(0, 10))
 
-        self.browse_button = tk.Button(self, text="Browse...", command=self.browse_for_directory)
+        self.download_dir_label = tk.Label(self, text="Please select the directory to save the downloaded contents:")
+        self.download_dir_label.pack(pady=(10, 0))
+
+        self.download_dir_entry = tk.Entry(self, width=60)
+        self.download_dir_entry.pack(ipady=10, pady=(0, 5))
+
+        self.browse_button = tk.Button(self, text="Browse...", command=self.browse_for_directory, width=51)
         self.browse_button.pack()
 
-        self.download_button = tk.Button(self, text="Download", command=self.download_repository)
-        self.download_button.pack()
+        self.cwd_button = tk.Button(self, text="Set download location to current working directory",
+                                    command=self.set_download_dir_to_cwd, width=51)
+        self.cwd_button.pack(pady=(10, 0))
+
+        self.progress_label = tk.Label(self, text="")
+        self.progress_label.pack()
+
+        self.progress_bar = ttk.Progressbar(self, orient="horizontal", length=365, mode="determinate")
+        self.progress_bar.pack()
+
+        self.download_button = tk.Button(self, text="Download", command=self.download_repository, width=51)
+        self.download_button.pack(ipady=20, pady=10)
 
     def browse_for_directory(self):
         directory = tk.filedialog.askdirectory()
@@ -49,6 +70,10 @@ class GitHubRepoDownloader(tk.Frame):
                 # Iterate over each file and directory in the repository
                 for item in tqdm(response.json(), desc='Downloading', unit='file', leave=False,
                                  disable=not progress_bar):
+
+                    if progress_bar:
+                        progress_bar.step(1)
+                        self.update()
 
                     # Check if the item is a file
                     if item["type"] == "file":
@@ -79,21 +104,32 @@ class GitHubRepoDownloader(tk.Frame):
         else:
             raise Exception("Failed to download directory: " + str(response.status_code))
 
+    def set_download_dir_to_cwd(self):
+        self.download_dir_entry.delete(0, tk.END)
+        self.download_dir_entry.insert(0, os.getcwd())
+
     def download_repository(self):
         url = self.url_entry.get()
         try:
-            data = self.download_directory(url)
+            self.progress_label.config(text="Downloading repository...")
+            self.progress_bar.config(maximum=100, value=0)
+            self.progress_bar.pack()
+            data = self.download_directory(url, progress_bar=self.progress_bar)
+
         except Exception as e:
             tk.messagebox.showerror("Error", str(e))
             return
 
+        finally:
+            self.progress_label.config(text="")
+            self.progress_bar.stop()
+            self.progress_bar.pack_forget()
+            if self.progress_bar['value'] < self.progress_bar['maximum']:
+                # if the progress bar is not at maximum value, delay for 1 second
+                time.sleep(0.5)
+
         filename = url.split("/")[-1] + ".zip"
-        if hasattr(self, "directory"):
-            filepath = self.directory + "/" + filename
-        else:
-            filepath = tkinter.filedialog.asksaveasfilename(defaultextension=".zip", initialfile=filename)
-            if not filepath:
-                return
+        filepath = os.path.join(self.download_dir_entry.get(), filename)
 
         with open(filepath, "wb") as f:
             f.write(data)
