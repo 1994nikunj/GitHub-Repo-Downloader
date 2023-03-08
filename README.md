@@ -16,6 +16,7 @@
 
 ## Sample Screenshots
 ![screenshot_1.png](Assets%2Fscreenshot_1.png)
+- - - -
 ![screenshot_2.png](Assets%2Fscreenshot_2.png)
 ## Usage
 
@@ -29,19 +30,7 @@ To use the GUI, simply run the script with no command-line arguments:
 ```shell
 python main.py
 ```
-
 This will open a tkinter window where you can enter the repository URL and choose a save location for the ZIP archive.
-
-## Features
-#### 1. Directory save navigation:
-- The script includes the feature that allows users to select a local directory where they would like to  save the 
-downloaded repository ZIP archive. This feature is accessible via the 'Browse...' button in the GUI or by  passing a 
-directory path as an optional command-line argument when running the script.
-
-#### 2. Progress Bar
-  - The GUI version of the script includes a progress bar that shows the current download progress as a percentage of the 
-  total file size. This allows you to track the download progress and estimate how long it will take to complete. The 
-  progress bar updates in real-time as each file is downloaded, so you can see the progress as it happens.
 
 ## Requirements
 This script requires Python 3 and the following modules:
